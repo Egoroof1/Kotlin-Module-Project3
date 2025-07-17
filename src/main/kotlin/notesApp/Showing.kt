@@ -20,7 +20,6 @@ class Showing {
         return archivesMap
     }
 
-
     private fun showNote(archive: Archive, note: Note){
         while (true){
             println("----------------------------------------------------------------------------\n" +
@@ -75,28 +74,33 @@ class Showing {
             println("Список архивов:")
             println("0. Создать архив")
 
-            for ((k, v) in archivesMap){
-                println("${k}. ${v.title}")
-            }
+            menu(archivesMap, listMa = { input, map ->
+                when (input) {
+                    0 -> putArchive()
+                    in 1..map.size -> {
+                        showNotes(map[input] as Archive)
+                    }
 
-            println("${archivesMap.size + 1}. Выход")
-
-            print("Ввод => ")
-            val input = readlnOrNull()?.toIntOrNull() ?: -1
-
-
-            when (input) {
-                0 -> putArchive()
-                in 1..archivesMap.size -> {
-                    showNotes(archivesMap[input]!!)
+                    map.size+1 -> return
+                    else -> println("----------------------------------------------------------------------------" +
+                            "\nВведите номер из меню")
                 }
-                archivesMap.size+1 -> return
-                else -> println("----------------------------------------------------------------------------" +
-                        "\nВведите номер из меню")
             }
-
-            println("----------------------------------------------------------------------------")
-
         }
+    }
+
+    private inline fun <reified T: Item> menu(map: MutableMap<Int, T>, listMa: (String, MutableMap<Int, Item>) -> Unit) {
+        for ((k, v) in map){
+            println("${k}. ${v.title}")
+        }
+
+        println("${map.size + 1}. Выход")
+
+        print("Ввод => ")
+        val input = readlnOrNull()?.toIntOrNull() ?: -1
+
+        listMa(input, map)
+
+        println("----------------------------------------------------------------------------")
     }
 }
