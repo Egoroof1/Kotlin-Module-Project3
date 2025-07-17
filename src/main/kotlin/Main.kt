@@ -1,3 +1,7 @@
+import notesApp.Showing
+
 fun main(args: Array<String>) {
-    println("Hello World!")
+    val show = Showing()
+    show.showArchives()
+
 }
