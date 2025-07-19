@@ -4,21 +4,34 @@ class Showing {
     private val archivesMap: MutableMap<Int, Archive> = mutableMapOf()
 
     private fun putArchive () {
-        println("=== Введите название архива ===")
-        val inputTitle = readlnOrNull() ?: ""
-        if (inputTitle.isNotEmpty()){
-            archivesMap[archivesMap.size+1] = Archive(inputTitle)
-            println("=== Архив $inputTitle создан ===")
-        } else {
-            println("Название не может быть пустым")
-            putArchive()
+        while (true){
+            println("=== Введите название архива ===")
+            val inputTitle = readlnOrNull() ?: ""
+
+
+            if (isNotDuplicate(inputTitle)) {
+                if (inputTitle.isNotEmpty()) {
+                    archivesMap[archivesMap.size + 1] = Archive(inputTitle)
+                    println("=== Архив $inputTitle создан ===")
+                    break
+                } else {
+                    println("Название не может быть пустым")
+                    continue
+                }
+            }
         }
-
     }
 
-    fun getArchives(): Map<Int, Archive>{
-        return archivesMap
+    fun isNotDuplicate (str: String): Boolean{
+        for (i in archivesMap){
+            if (i.value.title == str) {
+                println("Архив с таким именем уже существует")
+                return false
+            }
+        }
+        return true
     }
+
 
     private fun showNote(archive: Archive, note: Note){
         while (true){
@@ -74,33 +87,29 @@ class Showing {
             println("Список архивов:")
             println("0. Создать архив")
 
-            menu(archivesMap, listMa = { input, map ->
-                when (input) {
-                    0 -> putArchive()
-                    in 1..map.size -> {
-                        showNotes(map[input] as Archive)
-                    }
-
-                    map.size+1 -> return
-                    else -> println("----------------------------------------------------------------------------" +
-                            "\nВведите номер из меню")
-                }
+            for ((k, v) in archivesMap){
+                println("${k}. ${v.title}")
             }
+
+            println("${archivesMap.size + 1}. Выход")
+
+            print("Ввод => ")
+            val input = readlnOrNull()?.toIntOrNull() ?: -1
+
+
+            when (input) {
+                0 -> putArchive()
+                in 1..archivesMap.size -> {
+                    showNotes(archivesMap[input]!!)
+                }
+                archivesMap.size+1 -> return
+                else -> println("----------------------------------------------------------------------------" +
+                        "\nВведите номер из меню")
+            }
+
+            println("----------------------------------------------------------------------------")
+
         }
     }
 
-    private inline fun <reified T: Item> menu(map: MutableMap<Int, T>, listMa: (String, MutableMap<Int, Item>) -> Unit) {
-        for ((k, v) in map){
-            println("${k}. ${v.title}")
-        }
-
-        println("${map.size + 1}. Выход")
-
-        print("Ввод => ")
-        val input = readlnOrNull()?.toIntOrNull() ?: -1
-
-        listMa(input, map)
-
-        println("----------------------------------------------------------------------------")
-    }
 }
