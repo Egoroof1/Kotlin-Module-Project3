@@ -2,8 +2,8 @@ package notesApp
 
 
 class Archive (
-    override var title : String
-) : Item(title) {
+    var title : String
+) {
     private val notesMap: MutableMap<Int, Note> = mutableMapOf()
 
     fun addNote () {
@@ -31,10 +31,6 @@ class Archive (
     }
 
     fun getNotes(): Map<Int, Note>{
-        return notesMap
-    }
-
-    override fun getMap(): MutableMap<Int, out Item> {
         return notesMap
     }
 }
